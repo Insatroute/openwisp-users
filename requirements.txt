@@ -5,5 +5,4 @@ django-phonenumber-field~=8.1.0
 phonenumbers~=9.0.10
 packaging
 django-sesame~=3.2.3
-
-git+https://github.com/Insatroute/openwisp-utils.git@main#egg=openwisp_utils[rest,celery]
+openwisp-utils[rest,celery] @ https://github.com/Insatroute/openwisp-utils/tarball/main
