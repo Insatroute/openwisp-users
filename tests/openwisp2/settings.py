@@ -35,7 +35,9 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
-    "openwisp_users",
+    # "openwisp_users",
+    "openwisp_users.apps.OpenwispUsersConfig",
+
     # openwisp2 admin theme
     # (must be loaded here)
     "openwisp_utils.admin_theme",
@@ -52,7 +54,7 @@ INSTALLED_APPS = [
     "django_filters",
 ]
 
-AUTH_USER_MODEL = "openwisp_users.User"
+AUTH_USER_MODEL = "nexapp_users.User"
 SITE_ID = 1
 
 STATICFILES_FINDERS = [

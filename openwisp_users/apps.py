@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 class OpenwispUsersConfig(AppConfig):
     name = "openwisp_users"
-    app_label = "openwisp_users"
+    label = "nexapp_users"
     verbose_name = _("Users and Organizations")
     default_auto_field = "django.db.models.AutoField"
 
@@ -38,13 +38,13 @@ class OpenwispUsersConfig(AppConfig):
             },
             2: {
                 "label": _("Organizations"),
-                "model": get_model_name(self.app_label, "Organization"),
+                "model": get_model_name(self.label, "Organization"),
                 "name": "changelist",
                 "icon": "ow-org",
             },
             3: {
                 "label": _("Groups & Permissions"),
-                "model": get_model_name(self.app_label, "Group"),
+                "model": get_model_name(self.label, "Group"),
                 "name": "changelist",
                 "icon": "ow-permission",
             },
@@ -52,14 +52,14 @@ class OpenwispUsersConfig(AppConfig):
         if app_settings.ORGANIZATION_OWNER_ADMIN:
             items[4] = {
                 "label": _("Organization Owners"),
-                "model": get_model_name(self.app_label, "OrganizationOwner"),
+                "model": get_model_name(self.label, "OrganizationOwner"),
                 "name": "changelist",
                 "icon": "ow-org-owner",
             }
         if app_settings.ORGANIZATION_USER_ADMIN:
             items[5] = {
                 "label": _("Organization Users"),
-                "model": get_model_name(self.app_label, "OrganizationUser"),
+                "model": get_model_name(self.label, "OrganizationUser"),
                 "name": "changelist",
                 "icon": "ow-org-user",
             }
@@ -97,9 +97,9 @@ class OpenwispUsersConfig(AppConfig):
             )
 
     def connect_receivers(self):
-        OrganizationUser = load_model("openwisp_users", "OrganizationUser")
-        OrganizationOwner = load_model("openwisp_users", "OrganizationOwner")
-        Organization = load_model("openwisp_users", "Organization")
+        OrganizationUser = load_model("nexapp_users", "OrganizationUser")
+        OrganizationOwner = load_model("nexapp_users", "OrganizationOwner")
+        Organization = load_model("nexapp_users", "Organization")
         signal_tuples = [
             (post_save, "post_save"),
             (post_delete, "post_delete"),
@@ -199,7 +199,7 @@ class OpenwispUsersConfig(AppConfig):
     def create_organization_owner(cls, instance, created, **kwargs):
         if not created or not instance.is_admin:
             return
-        OrganizationOwner = load_model("openwisp_users", "OrganizationOwner")
+        OrganizationOwner = load_model("nexapp_users", "OrganizationOwner")
         org_owner_exist = OrganizationOwner.objects.filter(
             organization=instance.organization
         ).exists()

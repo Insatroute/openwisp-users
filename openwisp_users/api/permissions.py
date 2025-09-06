@@ -5,7 +5,7 @@ from rest_framework.permissions import (
 )
 from swapper import load_model
 
-Organization = load_model("openwisp_users", "Organization")
+Organization = load_model("nexapp_users", "Organization")
 
 
 class ObjectOrganizationMixin(object):

@@ -8,7 +8,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("openwisp_users", "0015_alter_organization_users_alter_organizationuser_user"),
+        ("nexapp_users", "0015_alter_organization_users_alter_organizationuser_user"),
     ]
 
     operations = [
@@ -49,7 +49,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="%(app_label)s_%(class)s_sent_invitations",
-                        to="openwisp_users.user",
+                        to="nexapp_users.user",
                     ),
                 ),
                 (
@@ -59,7 +59,7 @@ class Migration(migrations.Migration):
                         null=True,
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="%(app_label)s_%(class)s_invitations",
-                        to="openwisp_users.user",
+                        to="nexapp_users.user",
                     ),
                 ),
                 (
@@ -67,7 +67,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="organization_invites",
-                        to="openwisp_users.organization",
+                        to="nexapp_users.organization",
                     ),
                 ),
             ],

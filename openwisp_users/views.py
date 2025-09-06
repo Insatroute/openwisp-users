@@ -6,7 +6,7 @@ from openwisp_utils.admin_theme.views import (
 
 from .widgets import SHARED_SYSTEMWIDE_LABEL
 
-Organization = load_model("openwisp_users", "Organization")
+Organization = load_model("nexapp_users", "Organization")
 
 
 class AutocompleteJsonView(BaseAutocompleteJsonView):

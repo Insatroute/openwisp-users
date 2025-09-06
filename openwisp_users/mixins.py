@@ -82,7 +82,7 @@ class OrgMixin(ValidateOrgMixin, models.Model):
     """
 
     organization = models.ForeignKey(
-        get_model_name("openwisp_users", "Organization"),
+        get_model_name("nexapp_users", "Organization"),
         verbose_name=_("organization"),
         on_delete=models.CASCADE,
     )

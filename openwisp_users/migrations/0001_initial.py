@@ -211,7 +211,7 @@ class Migration(migrations.Migration):
                     models.OneToOneField(
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="owner",
-                        to="openwisp_users.Organization",
+                        to="nexapp_users.Organization",
                     ),
                 ),
             ],
@@ -251,14 +251,14 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="organization_users",
-                        to="openwisp_users.Organization",
+                        to="nexapp_users.Organization",
                     ),
                 ),
                 (
                     "user",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="openwisp_users_organizationuser",
+                        related_name="nexapp_users_organizationuser",
                         to=settings.AUTH_USER_MODEL,
                     ),
                 ),
@@ -286,15 +286,15 @@ class Migration(migrations.Migration):
             name="organization_user",
             field=models.OneToOneField(
                 on_delete=django.db.models.deletion.CASCADE,
-                to="openwisp_users.OrganizationUser",
+                to="nexapp_users.OrganizationUser",
             ),
         ),
         migrations.AddField(
             model_name="organization",
             name="users",
             field=models.ManyToManyField(
-                related_name="openwisp_users_organization",
-                through="openwisp_users.OrganizationUser",
+                related_name="nexapp_users_organization",
+                through="nexapp_users.OrganizationUser",
                 to=settings.AUTH_USER_MODEL,
             ),
         ),

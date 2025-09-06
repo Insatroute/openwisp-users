@@ -6,7 +6,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("openwisp_users", "0016_organizationinvitation"),
+        ("nexapp_users", "0016_organizationinvitation"),
     ]
 
     operations = [

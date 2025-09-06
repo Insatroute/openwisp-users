@@ -4,7 +4,7 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-    dependencies = [("openwisp_users", "0010_allow_admins_change_organization")]
+    dependencies = [("nexapp_users", "0010_allow_admins_change_organization")]
 
     operations = [
         migrations.AlterField(

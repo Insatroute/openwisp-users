@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from .authentication import BearerAuthentication
 from .permissions import DjangoModelPermissions, IsOrganizationManager
 
-Organization = swapper.load_model("openwisp_users", "Organization")
+Organization = swapper.load_model("nexapp_users", "Organization")
 
 
 class OrgLookup:

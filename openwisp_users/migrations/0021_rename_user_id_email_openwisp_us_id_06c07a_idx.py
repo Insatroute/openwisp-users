@@ -5,7 +5,7 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("openwisp_users", "0020_populate_password_updated_field"),
+        ("nexapp_users", "0020_populate_password_updated_field"),
     ]
 
     operations = [

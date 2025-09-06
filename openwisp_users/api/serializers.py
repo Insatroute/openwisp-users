@@ -11,12 +11,12 @@ from swapper import load_model
 
 from openwisp_utils.api.serializers import ValidatedModelSerializer
 
-Group = load_model("openwisp_users", "Group")
-Organization = load_model("openwisp_users", "Organization")
+Group = load_model("nexapp_users", "Group")
+Organization = load_model("nexapp_users", "Organization")
 User = get_user_model()
-OrganizationUser = load_model("openwisp_users", "OrganizationUser")
+OrganizationUser = load_model("nexapp_users", "OrganizationUser")
 logger = logging.getLogger(__name__)
-OrganizationOwner = load_model("openwisp_users", "OrganizationOwner")
+OrganizationOwner = load_model("nexapp_users", "OrganizationOwner")
 
 
 class OrganizationSerializer(ValidatedModelSerializer):

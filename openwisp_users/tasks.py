@@ -18,7 +18,7 @@ from openwisp_utils.admin_theme.email import send_email
 from . import settings as app_settings
 
 User = get_user_model()
-OrganizationUser = load_model("openwisp_users", "OrganizationUser")
+OrganizationUser = load_model("nexapp_users", "OrganizationUser")
 
 
 @shared_task

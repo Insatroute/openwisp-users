@@ -136,7 +136,7 @@ class AbstractUser(BaseUser):
         if organizations is not None:
             return organizations
 
-        manager = load_model("openwisp_users", "OrganizationUser").objects
+        manager = load_model("nexapp_users", "OrganizationUser").objects
         org_users = manager.filter(
             user=self, organization__is_active=True
         ).select_related("organization", "organizationowner")
@@ -240,7 +240,7 @@ class BaseOrganization(models.Model):
         if not self.users.all().exists():
             is_admin = True
 
-        OrganizationUser = load_model("openwisp_users", "OrganizationUser")
+        OrganizationUser = load_model("nexapp_users", "OrganizationUser")
         return OrganizationUser.objects.create(
             user=user, organization=self, is_admin=is_admin
         )

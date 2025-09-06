@@ -2,7 +2,7 @@ from django.db import migrations, models
 
 
 def set_blank_emails_to_none(apps, schema_editor):
-    User = apps.get_model("openwisp_users", "User")
+    User = apps.get_model("nexapp_users", "User")
     # if there is any user with blank email address
     # set its email address to None, otherwise the
     # unique constraint will be triggered by the empty string
@@ -12,7 +12,7 @@ def set_blank_emails_to_none(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-    dependencies = [("openwisp_users", "0006_id_email_index_together")]
+    dependencies = [("nexapp_users", "0006_id_email_index_together")]
 
     operations = [
         # allow NULL

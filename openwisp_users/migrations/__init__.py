@@ -10,7 +10,7 @@ def set_default_organization_uuid(apps, schema_editor):
     Get or create a default organization then
     set settings._OPENWISP_DEFAULT_ORG_UUID
     """
-    org_model = swapper.get_model_name("openwisp_users", "organization")
+    org_model = swapper.get_model_name("nexapp_users", "organization")
     model_app_label = swapper.split(org_model)[0]
     organization = apps.get_model(model_app_label, "organization")
     default_organization = organization.objects.first()
@@ -32,7 +32,7 @@ def set_default_organization_uuid(apps, schema_editor):
 
 
 def create_default_groups(apps, schema_editor):
-    org_model = swapper.get_model_name("openwisp_users", "organization")
+    org_model = swapper.get_model_name("nexapp_users", "organization")
     model_app_label = swapper.split(org_model)[0]
     group = apps.get_model(model_app_label, "group")
 
@@ -87,7 +87,7 @@ def create_default_groups(apps, schema_editor):
 
 
 def update_admins_permissions(apps, schema_editor):
-    org_model = swapper.get_model_name("openwisp_users", "organization")
+    org_model = swapper.get_model_name("nexapp_users", "organization")
     model_app_label = swapper.split(org_model)[0]
     group = apps.get_model(model_app_label, "group")
     email_model = swapper.get_model_name("account", "EmailAddress")
@@ -114,7 +114,7 @@ def update_admins_permissions(apps, schema_editor):
 
 
 def get_model(apps, name):
-    model_name = swapper.get_model_name("openwisp_users", name)
+    model_name = swapper.get_model_name("nexapp_users", name)
     model_label = swapper.split(model_name)[0]
     return apps.get_model(model_label, name)
 

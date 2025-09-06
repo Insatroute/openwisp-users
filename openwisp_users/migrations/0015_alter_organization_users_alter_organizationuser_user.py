@@ -7,7 +7,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("openwisp_users", "0014_user_notes"),
+        ("nexapp_users", "0014_user_notes"),
     ]
 
     operations = [
@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             name="users",
             field=models.ManyToManyField(
                 related_name="%(app_label)s_%(class)s",
-                through="openwisp_users.OrganizationUser",
+                through="nexapp_users.OrganizationUser",
                 to=settings.AUTH_USER_MODEL,
             ),
         ),
@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="%(app_label)s_%(class)s",
-                to="openwisp_users.user",
+                to="nexapp_users.user",
             ),
         ),
     ]

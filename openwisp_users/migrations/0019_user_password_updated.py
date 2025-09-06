@@ -5,7 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("openwisp_users", "0018_allow_operator_view_organisation"),
+        ("nexapp_users", "0018_allow_operator_view_organisation"),
     ]
 
     operations = [

@@ -36,10 +36,10 @@ from . import settings as app_settings
 from .multitenancy import MultitenantAdminMixin, MultitenantOrgFilter
 from .utils import BaseAdmin
 
-Group = load_model("openwisp_users", "Group")
-Organization = load_model("openwisp_users", "Organization")
-OrganizationOwner = load_model("openwisp_users", "OrganizationOwner")
-OrganizationUser = load_model("openwisp_users", "OrganizationUser")
+Group = load_model("nexapp_users", "Group")
+Organization = load_model("nexapp_users", "Organization")
+OrganizationOwner = load_model("nexapp_users", "OrganizationOwner")
+OrganizationUser = load_model("nexapp_users", "OrganizationUser")
 User = get_user_model()
 logger = logging.getLogger(__name__)
 
@@ -467,7 +467,7 @@ class OrganizationUserFilter(MultitenantOrgFilter):
     def queryset(self, request, queryset):
         if self.value():
             queryset = queryset.filter(
-                openwisp_users_organizationuser__organization=self.value()
+                nexapp_users_organizationuser__organization=self.value()
             )
         return queryset
 

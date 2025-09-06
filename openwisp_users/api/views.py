@@ -34,10 +34,10 @@ from .serializers import (
 from .swagger import ObtainTokenRequest, ObtainTokenResponse
 from .throttling import AuthRateThrottle
 
-Group = load_model("openwisp_users", "Group")
-Organization = load_model("openwisp_users", "Organization")
+Group = load_model("nexapp_users", "Group")
+Organization = load_model("nexapp_users", "Organization")
 User = get_user_model()
-OrganizationUser = load_model("openwisp_users", "OrganizationUser")
+OrganizationUser = load_model("nexapp_users", "OrganizationUser")
 
 
 class ProtectedAPIMixin(BaseProtectedAPIMixin):

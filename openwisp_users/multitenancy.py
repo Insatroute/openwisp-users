@@ -8,7 +8,7 @@ from openwisp_utils.admin_theme.filters import AutocompleteFilter
 from .widgets import SHARED_SYSTEMWIDE_LABEL, OrganizationAutocompleteSelect
 
 User = get_user_model()
-OrganizationUser = load_model("openwisp_users", "OrganizationUser")
+OrganizationUser = load_model("nexapp_users", "OrganizationUser")
 
 
 class MultitenantAdminMixin(object):
