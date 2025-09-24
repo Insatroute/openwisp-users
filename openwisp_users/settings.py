@@ -1,6 +1,8 @@
 from django.conf import settings
 
 from openwisp_utils.utils import default_or_test
+import os
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 ORGANIZATION_USER_ADMIN = getattr(settings, "OPENWISP_ORGANIZATION_USER_ADMIN", True)
 ORGANIZATION_OWNER_ADMIN = getattr(settings, "OPENWISP_ORGANIZATION_OWNER_ADMIN", True)
@@ -49,3 +51,26 @@ setattr(
         "openwisp_users.views.AutocompleteJsonView",
     ),
 )
+
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [
+            os.path.join(os.path.dirname(BASE_DIR), "openwisp_users", "templates")
+        ],
+        "OPTIONS": {
+            "loaders": [
+                "django.template.loaders.filesystem.Loader",
+                "openwisp_utils.loaders.DependencyLoader",
+                "django.template.loaders.app_directories.Loader",
+            ],
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+                "openwisp_utils.admin_theme.context_processor.menu_groups",
+            ],
+        },
+    }
+]
