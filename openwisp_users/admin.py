@@ -36,6 +36,7 @@ from . import settings as app_settings
 from .multitenancy import MultitenantAdminMixin, MultitenantOrgFilter
 from .utils import BaseAdmin
 
+Device = load_model("config", "Device")
 Group = load_model("nexapp_users", "Group")
 Organization = load_model("nexapp_users", "Organization")
 OrganizationOwner = load_model("nexapp_users", "OrganizationOwner")
@@ -525,6 +526,18 @@ class OrganizationAdmin(
         if obj and not request.user.is_superuser and not request.user.is_manager(obj):
             return False
         return super().has_change_permission(request, obj)
+    
+    def total_devices(self, obj):
+        return Device.objects.filter(organization=obj).count()
+    total_devices.short_description = "Total Devices"
+    
+    def online_devices(self, obj):
+        return Device.objects.filter(organization=obj, monitoring__status="ok").count()
+    online_devices.short_description = "Online Devices"
+    
+    def offline_devices(self, obj):
+        return Device.objects.filter(organization=obj, monitoring__status="critical").count()
+    offline_devices.short_description = "Offline Devices"   
 
     class Media(UUIDAdmin.Media):
         css = {"all": ("openwisp-users/css/admin.css",)}
