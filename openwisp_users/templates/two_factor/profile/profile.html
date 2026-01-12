@@ -6,7 +6,7 @@
   <h1>{% block title %}{% trans "Account Security" %}{% endblock %}</h1>
 
   {% if default_device %}
-    <p>{% blocktrans with primary=default_device|as_action %}Primary method: {{ primary }}{% endblocktrans %}</p>
+    <p>{% blocktrans with primary=default_device|as_action %}Primary method: {{ primary }}<a href="/admin" class="btn-link"> login</a>{% endblocktrans %}</p>
 
     {% if available_phone_methods %}
       <h2>{% trans "Backup Phone Numbers" %}</h2>
@@ -42,19 +42,19 @@
       {% endblocktrans %}
     </p>
     <p><a href="{% url 'two_factor:backup_tokens' %}"
-          class="btn btn-info">{% trans "Show Codes" %}</a></p>
+          class="btn btn-info tf-btn-primary tf-btn">{% trans "Show Codes" %}</a></p>
 
-    <h3>{% trans "Disable Two-Factor Authentication" %}</h3>
+    <h3>{% trans "Disable Multi-Factor Authentication" %}</h3>
     <p>{% blocktrans trimmed %}However we strongly discourage you to do so, you can
-      also disable two-factor authentication for your account.{% endblocktrans %}</p>
-    <p><a class="btn btn-secondary" href="{% url 'two_factor:disable' %}">
-      {% trans "Disable Two-Factor Authentication" %}</a></p>
+      also disable multi-factor authentication for your account.{% endblocktrans %}</p>
+    <p><a class="btn tf-btn-primary tf-btn" href="{% url 'two_factor:disable' %}">
+      {% trans "Disable Multi-Factor Authentication" %}</a></p>
   {% else %}
-    <p>{% blocktrans trimmed %}Two-factor authentication is not enabled for your
-      account. Enable two-factor authentication for enhanced account
+    <p>{% blocktrans trimmed %}Multi-factor authentication is not enabled for your
+      account. Enable multi-factor authentication for enhanced account
       security.{% endblocktrans %}</p>
     <p><a href="{% url 'two_factor:setup' %}" class="btn btn-primary">
-      {% trans "Enable Two-Factor Authentication" %}</a>
+      {% trans "Enable Multi-Factor Authentication" %}</a>
     </p>
   {% endif %}
 {% endblock %}

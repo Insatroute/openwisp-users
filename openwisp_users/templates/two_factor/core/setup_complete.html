@@ -12,9 +12,9 @@
 </style>
 
 {% block content %}
-  <h1>{% block title %}{% trans "Enable Two-Factor Authentication" %}{% endblock %}</h1>
+  <h1>{% block title %}{% trans "Enable Multi-Factor Authentication" %}{% endblock %}</h1>
 
-  <p>{% blocktrans trimmed %}Congratulations, you've successfully enabled two-factor
+  <p>{% blocktrans trimmed %}Congratulations, you've successfully enabled multi-factor
       authentication.<a href="/admin" style="font-size: 16px; font-weight: 700; color:#f28c28;"> login</a>{% endblocktrans %}</p>
 
   {% if not phone_methods %}
