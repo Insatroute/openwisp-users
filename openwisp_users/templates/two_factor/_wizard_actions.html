@@ -1,0 +1,116 @@
+{% load i18n %}
+
+<style>
+  /* One clean row: Cancel left, Back/Next right */
+.tf-actions-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:nowrap;           /* IMPORTANT: prevents Cancel dropping down */
+  margin-top:14px;
+  width:100%;
+}
+
+/* Prevent theme floats/positions causing overlap */
+.tf-actions-row, .tf-actions-row *{
+  float:none !important;
+  position:static !important;
+  justify-content:center;
+}
+
+/* Cancel link (remove any icon square) */
+.tf-cancel{
+  background:#24415d;
+  border-color:#0e2a45;
+  color:#fff;
+  size:10px;
+}
+
+/* Kill pseudo elements that create the square */
+.tf-cancel::before,
+.tf-cancel::after{
+  content:none !important;
+  display:none !important;
+}
+
+/* Right buttons group */
+.tf-actions-right{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+/* Buttons */
+
+.tfc-btn{
+  height:36px;
+  padding: 8px 10px;
+  border-radius:6px;
+  border:1px solid transparent;
+  cursor:pointer;
+  margin:0 !important;
+  box-sizing:border-box;
+  text-decoration:none;
+  display:none;
+}
+.tf-btn{
+  height:36px;
+  padding:8px 18px;
+  border-radius:3px;
+  border:1px solid transparent;
+  font-weight:600;
+  cursor:pointer;
+  margin:0 !important;
+  box-sizing:border-box;
+  text-decoration:none;
+}
+
+.tf-btn-secondary{
+  background:#f5f5f5;
+  border-color:#d9d9d9;
+  color:#333;
+}
+
+.tf-btn-disabled{
+  background:#f1f1f1;
+  border-color:#e1e1e1;
+  color:#9a9a9a;
+  cursor:not-allowed;
+}
+
+.tf-btn-primary{
+  background:#ee8e21;   /* your dark blue Next */
+  border-color:#0e2a45;
+  color:#fff;
+}
+</style>
+
+<div class="tf-actions-row">
+ <div class="tf-actions-left">
+   {% if cancel_url and request.path != "/account/two_factor/setup/" %}
+   <a href="{{ cancel_url }}" class="tfc-btn tf-cancel">{% trans "Cancel" %}</a>
+   {% else %}
+   <a href="/account/two_factor/skip/" class="tf-btn tf-cancel">{% trans "Cancel" %}</a>
+  {% endif %}
+</div>
+
+  <div class="tf-actions-right">
+    {% if wizard.steps.prev %}
+      <button name="wizard_goto_step"
+              type="submit"
+              value="{{ wizard.steps.prev }}"
+              class="tf-btn tf-btn-secondary">
+        {% trans "Back" %}
+      </button>
+    {% else %}
+      <button disabled type="button" class="tf-btn tf-btn-disabled">
+        {% trans "Back" %}
+      </button>
+    {% endif %}
+
+    <button type="submit" class="tf-btn tf-btn-primary">
+      {% trans "Next" %}
+    </button>
+  </div>
+</div>

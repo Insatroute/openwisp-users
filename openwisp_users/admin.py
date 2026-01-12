@@ -35,6 +35,8 @@ from openwisp_utils.admin import UUIDAdmin
 from . import settings as app_settings
 from .multitenancy import MultitenantAdminMixin, MultitenantOrgFilter
 from .utils import BaseAdmin
+from django_otp import devices_for_user
+from django_otp.plugins.otp_totp.models import TOTPDevice
 
 Device = load_model("config", "Device")
 Group = load_model("nexapp_users", "Group")
@@ -193,19 +195,20 @@ class UserAdmin(MultitenantAdminMixin, BaseUserAdmin, BaseAdmin):
     add_form = UserCreationForm
     form = UserChangeForm
     ordering = ["-date_joined"]
-    readonly_fields = ["last_login", "date_joined", "password_updated"]
+    readonly_fields = ["last_login", "date_joined", "password_updated","is_2fa_enabled"]
     list_display = [
         "username",
         "email",
         "is_active",
         "is_staff",
         "is_superuser",
+        "is_2fa_enabled",
         "date_joined",
         "last_login",
     ]
     inlines = [EmailAddressInline, OrganizationUserInline]
     save_on_top = True
-    actions = ["delete_selected_overridden", "make_inactive", "make_active"]
+    actions = ["delete_selected_overridden", "make_inactive", "make_active", "make_2fa_disabled"]
     fieldsets = list(BaseUserAdmin.fieldsets)
 
     # To ensure extended apps use this template.
@@ -272,6 +275,38 @@ class UserAdmin(MultitenantAdminMixin, BaseUserAdmin, BaseAdmin):
                 ),
                 messages.SUCCESS,
             )
+            
+    @admin.action(description=_("Disable MFA for selected users"), permissions=["change"])
+    @require_confirmation
+    def make_2fa_disabled(self, request, queryset):
+        deleted = 0
+        affected_users = 0
+
+        for user in queryset:
+            user_deleted = 0
+            for d in devices_for_user(user):
+                d.delete()
+                user_deleted += 1
+
+            if user_deleted:
+                affected_users += 1
+                deleted += user_deleted
+
+        # clear skip flag only for the CURRENT admin user session (optional)
+        # request.session.pop("skip_2fa_setup", None)
+
+        if affected_users:
+            self.message_user(
+                request,
+                _(f"MFA disabled for {affected_users}"),
+                level=messages.SUCCESS,
+            )
+        else:
+            self.message_user(
+                request,
+                _("No MFA devices found for the selected users."),
+                level=messages.WARNING,
+            )
 
     def get_list_display(self, request):
         """
@@ -311,6 +346,13 @@ class UserAdmin(MultitenantAdminMixin, BaseUserAdmin, BaseAdmin):
             non_superuser_fieldsets = deepcopy(fieldsets)
             non_superuser_fieldsets[2][1]["fields"] = user_permissions
             return non_superuser_fieldsets
+        if obj:
+            fieldsets = list(fieldsets)
+            first = list(fieldsets[0])
+            first[1] = dict(first[1])
+            first[1]["fields"] = tuple(first[1].get("fields", ())) + ("is_2fa_enabled",)
+            fieldsets[0] = tuple(first)
+            return tuple(fieldsets)
         return fieldsets
 
     def get_readonly_fields(self, request, obj=None):
@@ -378,6 +420,14 @@ class UserAdmin(MultitenantAdminMixin, BaseUserAdmin, BaseAdmin):
             else:
                 queryset = excluded_owners_qs
         return delete_selected(self, request, queryset)
+    
+    @admin.display(boolean=True, description="MFA Enabled")
+    def is_2fa_enabled(self, obj):
+        # Works even if confirmed field is missing in some device types
+        return any(getattr(d, "confirmed", True) for d in devices_for_user(obj))
+
+    
+
 
     def get_inline_instances(self, request, obj=None):
         """

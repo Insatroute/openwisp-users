@@ -22,6 +22,8 @@
 {% block content %}
   {% if action == 'make_inactive' %}
     <p>{% blocktrans %}Are you sure you want to make the selected users inactive?{% endblocktrans %}</p>
+  {% elif action == 'make_2fa_disabled' %}
+    <p>{% blocktrans %}Are you sure you want to make the selected users MFA disabled?{% endblocktrans %}</p>
   {% else %}
     <p>{% blocktrans %}Are you sure you want to make the selected users active?{% endblocktrans %}</p>
   {% endif %}
