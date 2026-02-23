@@ -3,65 +3,69 @@
 {% load two_factor_tags %}
 
 {% block extra_media %}
-  {{ form.media }}
+{{ form.media }}
 {% endblock %}
 
- 
 {% block content %}
-  <h1 style="text-align: center; font-size: 24px;">{% block title %}{% trans "Login" %}{% endblock %}</h1>
+{% comment %} <div class="breadcrumb">
+  <a href="/">{% trans "Home" %}</a>
+  <span class="breadcrumb-separator">›</span>
+  <span>{% trans "Log in" %}</span>
+</div> {% endcomment %}
+
+<h1>{% block title %}{% trans "Login" %}{% endblock %}</h1>
+
+{% if wizard.steps.current == 'auth' %}
+{% comment %} <p>{% trans "Enter your credentials to access your account." %}</p> {% endcomment %}
+{% elif wizard.steps.current == 'token' %}
+<p>{{ device|as_verbose_action }}</p>
+{% elif wizard.steps.current == 'backup' %}
+<p>{% blocktrans trimmed %}Enter a backup token to log in.{% endblocktrans %}</p>
+{% endif %}
+
+<form action="" method="post">
+  {% block main_form_content %}
+  {% csrf_token %}
+  {% include "two_factor/_wizard_forms.html" %}
 
   {% if wizard.steps.current == 'auth' %}
-    <p style="text-align: center; font-size: 14px;">{% blocktrans %}Enter your credentials.{% endblocktrans %}</p>
-  {% elif wizard.steps.current == 'token' %}
-    <p style="text-align: center;">{{ device|as_verbose_action }}</p>
-  {% elif wizard.steps.current == 'backup' %}
-    <p>{% blocktrans trimmed %}Use this form for entering backup tokens for logging in.
-      These tokens have been generated for you to print and keep safe. Please
-      enter one of these backup tokens to login to your account.{% endblocktrans %}</p>
+  <div style="text-align: right; margin: -16px 0 24px;">
+    <a href="{% url 'account_reset_password' %}" class="tf-link" style="display: inline; margin: 0; font-size: 13px;">
+      {% trans "Forgot Password?" %}
+    </a>
+  </div>
   {% endif %}
 
-  <form action="" method="post">
-    {% block main_form_content %}
-    {% csrf_token %}
-    {% include "two_factor/_wizard_forms.html" %}
-    {% if wizard.steps.current == 'auth' %}
-      <div class="auth-link-row">
-        <a class="auth-link" href="{% url 'account_reset_password' %}">
-          {% trans "Forgot Password?" %}
-        </a>
-      </div>
-    {% endif %}
-    {# hidden submit button to enable [enter] key #}
-    <input type="submit" value="" hidden />
+  {# hidden submit button to enable [enter] key #}
+  <input type="submit" value="" hidden />
 
-    {% if other_devices %}
-      <p>{% trans "Or, alternatively, use one of your other authentication methods:" %}</p>
-      <p>
-        {% for other in other_devices %}
-        <button name="challenge_device" value="{{ other.persistent_id }}"
-                class="btn btn-secondary btn-block" type="submit">
-          {{ other|as_action }}
-        </button>
-      {% endfor %}</p>
-    {% endif %}
+  {% if other_devices %}
+  <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border-color);">
+    <p style="font-size: 13px; margin-bottom: 12px;">{% trans "Or use another method:" %}</p>
+    {% for other in other_devices %}
+    <button name="challenge_device" value="{{ other.persistent_id }}" class="tf-btn tf-btn-secondary"
+      style="margin-bottom: 8px;" type="submit">
+      {{ other|as_action }}
+    </button>
+    {% endfor %}
+  </div>
+  {% endif %}
 
-    {% include "two_factor/_wizard_actions.html" %}
-    {% endblock %}
-  </form>
-
-  {% block 'backup_tokens' %}
-    {% if backup_tokens %}
-       <hr>
-       <div class="backup_tokens_form">
-       <form action="" method="post">
-           {% csrf_token %}
-            <p>{% trans "As a last resort, you can use a backup token:" %}</p>
-            <p>
-                <button name="wizard_goto_step" type="submit" value="backup"
-                    class="btn btn-sm btn-secondary btn-block">{% trans "Use Backup Token" %}</button>
-            </p>
-       </form>
-       </div>
-    {% endif %}
+  {% include "two_factor/_wizard_actions.html" %}
   {% endblock %}
+</form>
+
+{% block 'backup_tokens' %}
+{% if backup_tokens %}
+<div style="margin-top: 16px; text-align: center;">
+  <form action="" method="post">
+    {% csrf_token %}
+    <button name="wizard_goto_step" type="submit" value="backup" class="tf-link"
+      style="background: none; border: none; cursor: pointer; font-family: inherit;">
+      {% trans "Use a backup token" %}
+    </button>
+  </form>
+</div>
+{% endif %}
+{% endblock %}
 {% endblock %}

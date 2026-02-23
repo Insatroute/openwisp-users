@@ -2,13 +2,51 @@
 {% load i18n %}
 
 {% block content %}
-  <h1>{% block title %}{% trans "Disable Multi-factor Authentication" %}{% endblock %}</h1>
+  <h1>{% block title %}{% trans "Disable Two-factor Authentication" %}{% endblock %}</h1>
   <p>{% blocktrans trimmed %}You are about to disable two-factor authentication. This
     weakens your account security, are you sure?{% endblocktrans %}</p>
   <form method="post">
     {% csrf_token %}
     <table>{{ form.as_table }}</table>
-    <button class="btn btn-danger"
-            type="submit">{% trans "Disable" %}</button>
+    <button class="tf-btn" style="background: #ef4444; color: white; margin-top: 12px;" type="submit">{% trans "Disable" %}</button>
   </form>
 {% endblock %}
+{% comment %} {% extends "two_factor/_base_focus.html" %}
+{% load i18n %}
+
+{% block content %}
+<div style="text-align: center; padding: 10px 0;">
+  <div
+    style="width: 80px; height: 80px; background: #fef2f2; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px;">
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round"
+      stroke-linejoin="round">
+      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+      <line x1="12" y1="9" x2="12" y2="13"></line>
+      <line x1="12" y1="17" x2="12.01" y2="17"></line>
+    </svg>
+  </div>
+
+  <h1>{% block title %}{% trans "Disable 2FA" %}{% endblock %}</h1>
+  <p>{% blocktrans trimmed %}You are about to remove Two-Factor Authentication from your account. This will
+    significantly decrease your protection against unauthorized access.{% endblocktrans %}</p>
+
+  <div
+    style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); margin: 24px 0; text-align: left;">
+    <form method="post">
+      {% csrf_token %}
+      <div style="margin-bottom: 24px;">
+        {% include "two_factor/_wizard_forms.html" %}
+      </div>
+
+      <button class="tf-btn" style="background: #ef4444; color: white;" type="submit">
+        {% trans "Yes, Disable 2FA" %}
+      </button>
+    </form>
+  </div>
+
+  <a href="{% url 'two_factor:profile' %}" class="tf-link">
+    {% trans "Cancel and keep 2FA enabled" %}
+  </a>
+</div>
+{% endblock %} {% endcomment %}
+

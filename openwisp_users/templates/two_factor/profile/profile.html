@@ -1,60 +1,81 @@
-{% extends "two_factor/_base.html" %}
+{% extends "two_factor/_base_focus.html" %}
 {% load i18n %}
 {% load two_factor_tags %}
 
 {% block content %}
-  <h1>{% block title %}{% trans "Account Security" %}{% endblock %}</h1>
+<h1>{% block title %}{% trans "Account Security" %}{% endblock %}</h1>
 
-  {% if default_device %}
-    <p>{% blocktrans with primary=default_device|as_action %}Primary method: {{ primary }}<a href="/admin" class="btn-link"> login</a>{% endblocktrans %}</p>
+{% if default_device %}
+<div
+  style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin: 24px 0;">
+  <span style="display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); font-weight: 700; margin-bottom: 8px;">{% trans "Primary Method" %}</span>
+  <div style="display: flex; align-items: center; justify-content: space-between;">
+    <span style="font-weight: 600; font-size: 16px;">{{ default_device|as_action }}</span>
+    <span style="background: #dcfce7; color: #166534; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 99px;">{% trans "Active" %}</span>
+  </div>
+</div>
 
-    {% if available_phone_methods %}
-      <h2>{% trans "Backup Phone Numbers" %}</h2>
-      <p>{% blocktrans trimmed %}If your primary method is not available, we are able to
-        send backup tokens to the phone numbers listed below.{% endblocktrans %}</p>
-      {% if backup_phones %}
-        <ul>
-          {% for phone in backup_phones %}
-            <li>
-              {{ phone|as_action }}
-              <form method="post" action="{% url 'two_factor:phone_delete' phone.id %}"
-                  onsubmit="return confirm({% trans 'Are you sure?' %})">
-                {% csrf_token %}
-                <button class="btn btn-sm btn-warning"
-                      type="submit">{% trans "Unregister" %}</button>
-              </form>
-            </li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-      <p><a href="{% url 'two_factor:phone_create' %}"
-        class="btn btn-info">{% trans "Add Phone Number" %}</a></p>
-    {% endif %}
+<div style="margin-bottom: 12px;">
+  <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 12px;">{% trans "Backup Methods" %}</h2>
+  <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">{% trans "Recovery methods used if your primary device is unavailable." %}</p>
 
-    <h2>{% trans "Backup Tokens" %}</h2>
-    <p>
-      {% blocktrans trimmed %}If you don't have any device with you, you can access
-        your account using backup tokens.{% endblocktrans %}
-      {% blocktrans trimmed count counter=backup_tokens %}
-        You have only one backup token remaining.
-      {% plural %}
-        You have {{ counter }} backup tokens remaining.
-      {% endblocktrans %}
-    </p>
-    <p><a href="{% url 'two_factor:backup_tokens' %}"
-          class="btn btn-info tf-btn-primary tf-btn">{% trans "Show Codes" %}</a></p>
-
-    <h3>{% trans "Disable Multi-Factor Authentication" %}</h3>
-    <p>{% blocktrans trimmed %}However we strongly discourage you to do so, you can
-      also disable multi-factor authentication for your account.{% endblocktrans %}</p>
-    <p><a class="btn tf-btn-primary tf-btn" href="{% url 'two_factor:disable' %}">
-      {% trans "Disable Multi-Factor Authentication" %}</a></p>
-  {% else %}
-    <p>{% blocktrans trimmed %}Multi-factor authentication is not enabled for your
-      account. Enable multi-factor authentication for enhanced account
-      security.{% endblocktrans %}</p>
-    <p><a href="{% url 'two_factor:setup' %}" class="btn btn-primary">
-      {% trans "Enable Multi-Factor Authentication" %}</a>
-    </p>
+  {% if available_phone_methods %}
+  <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;">
+    {% for phone in backup_phones %}
+    <div
+      style="display: flex; align-items: center; justify-content: space-between; background: white; border: 1px solid var(--border-color); padding: 12px 16px; border-radius: 8px;">
+      <span style="font-size: 14px; font-weight: 500;">{{ phone|as_action }}</span>
+      <form method="post" action="{% url 'two_factor:phone_delete' phone.id %}" onsubmit="return confirm('{% trans "Remove this backup phone?" %}')">
+        {% csrf_token %}
+        <button type="submit"
+          style="background: none; border: none; color: #ef4444; font-size: 13px; font-weight: 600; cursor: pointer;">{% trans "Remove" %}</button>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+  <a href="{% url 'two_factor:phone_create' %}" class="tf-btn tf-btn-secondary" style="height: 18px; font-size: 14px;">
+    {% trans "Add Backup Phone" %}
+  </a>
   {% endif %}
+</div>
+
+<div style="margin-bottom: 12px; padding-top: 8px; border-top: 1px solid var(--border-color);">
+  <h2 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">{% trans "Backup Tokens" %}</h2>
+  <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 16px;">
+    {% blocktrans trimmed count counter=backup_tokens %}
+    You have one backup token remaining.
+    {% plural %}
+    You have {{ counter }} backup tokens remaining.
+    {% endblocktrans %}
+  </p>
+  <a href="{% url 'two_factor:backup_tokens' %}" class="tf-btn tf-btn-secondary" style="height: 18px; font-size: 14px;">
+    {% trans "Manage Tokens" %}
+  </a>
+</div>
+
+<div style="margin-top: 12px; padding: 20px; border: 1px solid #fee2e2; background: #fef2f2; border-radius: 12px;">
+  <h3 style="font-size: 15px; font-weight: 600; color: #991b1b; margin-bottom: 8px;">{% trans "Advanced Options" %}</h3>
+  <p style="font-size: 13px; color: #b91c1c; margin-bottom: 16px;">{% trans "Disabling 2FA will significantly reduce your account security." %}</p>
+  <a href="{% url 'two_factor:disable' %}" class="tf-link"
+    style="color: #991b1b; font-weight: 600; margin: 0; text-align: center; display: block">
+    {% trans "Disable Two-Factor Authentication" %}
+  </a>
+</div>
+
+{% else %}
+<div style="text-align: center; padding: 40px 0;">
+  <div
+    style="width: 64px; height: 64px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"
+      stroke-linejoin="round">
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+      <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+    </svg>
+  </div>
+  <p style="margin-bottom: 24px;">{% trans "Enhanced security is not yet enabled for your account." %}</p>
+  <a href="{% url 'two_factor:setup' %}" class="tf-btn tf-btn-primary">
+    {% trans "Enable 2FA" %}
+  </a>
+</div>
+{% endif %}
 {% endblock %}

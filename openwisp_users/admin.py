@@ -168,7 +168,7 @@ class UserCreationForm(UserFormMixin, BaseUserCreationForm):
             ("Personal Info", {"classes": ("wide",), "fields": personal_fields}),
             (
                 "Permissions",
-                {"classes": ("wide",), "fields": ["is_active", "is_staff", "groups"]},
+                {"classes": ("wide",), "fields": ["is_active", "require_2fa", "is_staff", "groups"]},
             ),
         )
         fieldsets_superuser = (
@@ -178,7 +178,7 @@ class UserCreationForm(UserFormMixin, BaseUserCreationForm):
                 "Permissions",
                 {
                     "classes": ("wide",),
-                    "fields": ["is_active", "is_staff", "is_superuser", "groups"],
+                    "fields": ["is_active", "require_2fa", "is_staff", "is_superuser", "groups"],
                 },
             ),
         )
@@ -202,13 +202,16 @@ class UserAdmin(MultitenantAdminMixin, BaseUserAdmin, BaseAdmin):
         "is_active",
         "is_staff",
         "is_superuser",
+        "require_2fa",
         "is_2fa_enabled",
         "date_joined",
         "last_login",
     ]
+
     inlines = [EmailAddressInline, OrganizationUserInline]
     save_on_top = True
     actions = ["delete_selected_overridden", "make_inactive", "make_active", "make_2fa_disabled"]
+    
     fieldsets = list(BaseUserAdmin.fieldsets)
 
     # To ensure extended apps use this template.
@@ -345,12 +348,17 @@ class UserAdmin(MultitenantAdminMixin, BaseUserAdmin, BaseAdmin):
             # copy to avoid modifying reference
             non_superuser_fieldsets = deepcopy(fieldsets)
             non_superuser_fieldsets[2][1]["fields"] = user_permissions
+            if obj:
+                first = list(non_superuser_fieldsets[0])
+                first[1] = dict(first[1])
+                first[1]["fields"] = tuple(first[1].get("fields", ())) + ("require_2fa", "is_2fa_enabled")
+                non_superuser_fieldsets[0] = tuple(first)
             return non_superuser_fieldsets
         if obj:
             fieldsets = list(fieldsets)
             first = list(fieldsets[0])
             first[1] = dict(first[1])
-            first[1]["fields"] = tuple(first[1].get("fields", ())) + ("is_2fa_enabled",)
+            first[1]["fields"] = tuple(first[1].get("fields", ())) + ("require_2fa", "is_2fa_enabled")
             fieldsets[0] = tuple(first)
             return tuple(fieldsets)
         return fieldsets
@@ -423,10 +431,8 @@ class UserAdmin(MultitenantAdminMixin, BaseUserAdmin, BaseAdmin):
     
     @admin.display(boolean=True, description="MFA Enabled")
     def is_2fa_enabled(self, obj):
-        # Works even if confirmed field is missing in some device types
-        return any(getattr(d, "confirmed", True) for d in devices_for_user(obj))
-
-    
+        from two_factor.utils import default_device
+        return default_device(obj) is not None
 
 
     def get_inline_instances(self, request, obj=None):

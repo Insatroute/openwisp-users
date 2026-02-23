@@ -68,6 +68,11 @@ class AbstractUser(BaseUser):
         default=settings.LANGUAGE_CODE,
     )
     password_updated = models.DateField(_("password updated"), blank=True, null=True)
+    require_2fa = models.BooleanField(
+        _("Require 2FA"),
+        default=False,
+        help_text=_("Designates whether this user is forced to set up Two-Factor Authentication.")
+    )
 
     objects = UserManager()
 

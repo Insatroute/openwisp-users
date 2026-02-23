@@ -1,116 +1,107 @@
 {% load i18n %}
-
 <style>
-  /* One clean row: Cancel left, Back/Next right */
-.tf-actions-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  flex-wrap:nowrap;           /* IMPORTANT: prevents Cancel dropping down */
-  margin-top:14px;
-  width:100%;
-}
+  .tf-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 32px;
+  }
 
-/* Prevent theme floats/positions causing overlap */
-.tf-actions-row, .tf-actions-row *{
-  float:none !important;
-  position:static !important;
-  justify-content:center;
-}
+  .tf-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 48px;
+    padding: 0 24px;
+    font-size: 15px;
+    font-weight: 700;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    width: 100%;
+    border: 1px solid transparent;
+    font-family: inherit;
+  }
 
-/* Cancel link (remove any icon square) */
-.tf-cancel{
-  background:#24415d;
-  border-color:#0e2a45;
-  color:#fff;
-  size:10px;
-}
+  .tf-btn-primary {
+    background-color: var(--primary, #ee8e21);
+    color: white;
+  }
 
-/* Kill pseudo elements that create the square */
-.tf-cancel::before,
-.tf-cancel::after{
-  content:none !important;
-  display:none !important;
-}
+  .tf-btn-primary:hover {
+    background-color: var(--primary-dark, #d67a1a);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(238, 142, 33, 0.25);
+  }
 
-/* Right buttons group */
-.tf-actions-right{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
+  .tf-btn-secondary {
+    background-color: #f8fafc;
+    border-color: #e2e8f0;
+    color: #475569;
+  }
 
-/* Buttons */
+  .tf-btn-secondary:hover {
+    background-color: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #1e293b;
+  }
 
-.tfc-btn{
-  height:36px;
-  padding: 8px 10px;
-  border-radius:6px;
-  border:1px solid transparent;
-  cursor:pointer;
-  margin:0 !important;
-  box-sizing:border-box;
-  text-decoration:none;
-  display:none;
-}
-.tf-btn{
-  height:36px;
-  padding:8px 18px;
-  border-radius:3px;
-  border:1px solid transparent;
-  font-weight:600;
-  cursor:pointer;
-  margin:0 !important;
-  box-sizing:border-box;
-  text-decoration:none;
-}
+  .tf-btn-disabled {
+    background-color: #f1f5f9;
+    color: #94a3b8;
+    cursor: not-allowed;
+    border-color: #e2e8f0;
+  }
 
-.tf-btn-secondary{
-  background:#f5f5f5;
-  border-color:#d9d9d9;
-  color:#333;
-}
+  .tf-actions-row {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+  }
 
-.tf-btn-disabled{
-  background:#f1f1f1;
-  border-color:#e1e1e1;
-  color:#9a9a9a;
-  cursor:not-allowed;
-}
+  .tf-actions-row .tf-btn {
+    flex: 1;
+  }
 
-.tf-btn-primary{
-  background:#ee8e21;   /* your dark blue Next */
-  border-color:#0e2a45;
-  color:#fff;
-}
+  /* Link style for cancel/alternative */
+  .tf-link {
+    display: block;
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-muted);
+    text-decoration: none;
+    margin-top: 16px;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+
+  .tf-link:hover {
+    color: var(--primary);
+    text-decoration: underline;
+  }
 </style>
 
-<div class="tf-actions-row">
- <div class="tf-actions-left">
-   {% if cancel_url and request.path != "/account/two_factor/setup/" %}
-   <a href="{{ cancel_url }}" class="tfc-btn tf-cancel">{% trans "Cancel" %}</a>
-   {% else %}
-   <a href="/account/two_factor/skip/" class="tf-btn tf-cancel">{% trans "Cancel" %}</a>
-  {% endif %}
-</div>
-
-  <div class="tf-actions-right">
-    {% if wizard.steps.prev %}
-      <button name="wizard_goto_step"
-              type="submit"
-              value="{{ wizard.steps.prev }}"
-              class="tf-btn tf-btn-secondary">
-        {% trans "Back" %}
-      </button>
-    {% else %}
-      <button disabled type="button" class="tf-btn tf-btn-disabled">
-        {% trans "Back" %}
-      </button>
-    {% endif %}
-
+<div class="tf-actions">
+  {% if wizard.steps.prev %}
+  <div class="tf-actions-row">
+    <button name="wizard_goto_step" type="submit" value="{{ wizard.steps.prev }}" class="tf-btn tf-btn-secondary">
+      {% trans "Back" %}
+    </button>
     <button type="submit" class="tf-btn tf-btn-primary">
       {% trans "Next" %}
     </button>
   </div>
+  {% else %}
+  <button type="submit" class="tf-btn tf-btn-primary">
+    {% if wizard.steps.current == 'auth' %}
+    {% trans "Log In" %}
+    {% else %}
+    {% trans "Next" %}
+    {% endif %}
+  </button>
+  {% endif %}
+
+  {% if cancel_url %}
+  <a href="{{ cancel_url }}" class="tf-link">{% trans "Cancel" %}</a>
+  {% endif %}
 </div>

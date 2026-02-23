@@ -3,316 +3,265 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Log in | SD-WAN Controller</title>
+  <title>{% block title %}Log in{% endblock %} | SD-WAN Controller</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="icon" type="image/x-icon" href="{% static 'favicon.png' %}" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    html,body{ height:100%; }
-    body{
-      margin:0;
-      font-family:"Poppins","Inter","Roboto",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
-      color:#0f172a;
-      background:#ffffff;
+    :root{
+      --primary:#ee8e21;
+      --primary-dark:#d67a1a;
+      --secondary:#24415d;
+      --text-main:rgb(74, 85, 95);
+      --text-muted:#64748b;
+      --bg-body:#ffffff;
+      --bg-auth:#f8fafc;
+      --bg-color: #f5f8fa;
+      --card-shadow:0 25px 50px -12px rgba(0,0,0,0.08);
+      --border-color:#e2e8f0;
     }
 
-    /* ===== Layout ===== */
+    *{ box-sizing:border-box; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+
+    html,body{
+      height:100%;
+      margin:0;
+      font-family:'Outfit',-apple-system,sans-serif;
+      color:var(--text-main);
+      background:var(--bg-body);
+      text-align:center;
+    }
+
+    /* ===== Page shell ===== */
     .shell{
       min-height:100vh;
-      display:flex;
-    }
-    .split{
-      width:100%;
-      min-height:100vh;
-      display:grid;
-      grid-template-columns: 1.25fr 1fr;
-      overflow:hidden;
-    }
-
-    /* ===== Left ===== */
-    .left{
-      background:#f6fbff;
       position:relative;
-      padding: 34px 34px 18px;
-      display:grid;
-      grid-template-rows:auto 1fr auto;
-      gap:18px;
       overflow:hidden;
+      background:#fff;
     }
 
-    .left::before{
+    /* Background lines image ONLY */
+    .shell::before{
       content:"";
       position:absolute;
       inset:0;
-      background:
-        radial-gradient(circle at 18% 12%, rgba(242,140,40,.12), transparent 42%),
-        radial-gradient(circle at 75% 78%, rgba(13,110,253,.10), transparent 46%);
+      background-image:url("{% static 'login-page-lines.png' %}");
+      background-repeat:no-repeat;
+      background-position:right top;
+      background-size:cover;
       pointer-events:none;
-    }
-    .left > *{ position:relative; z-index:1; }
-
-    .left-header{
-      text-align:center;
-      max-width: 760px;
-      margin: 0 auto;
-      padding-top: 6px;
-    }
-    .left-title{
-      margin:0;
-      font-size: 30px;
-      line-height: 1.12;
-      font-weight: 800;
-      color: rgb(74,85,95);
-      letter-spacing: .2px;
-    }
-    .left-subtitle{
-      margin: 10px 0 0;
-      font-size: 16px;
-      font-weight: 700;
-      color:#f28c28;
-      letter-spacing:.2px;
-    }
-
-    .left-visual{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding: 8px 0;
-    }
-    .left-visual img{
-      width: min(510px, 92%);
-      height:auto;
-      display:block;
-      filter: drop-shadow(0 18px 30px rgba(15,23,42,.10));
-    }
-
-    .left-footer{
-      text-align:center;
-      font-size: 12.5px;
-      color:#334155;
-      line-height: 1.4;
-    }
-    .left-footer a{ color:inherit; text-decoration:underline; }
-
-    /* ===== Right (Background + Card) ===== */
-    .right{
-      position:relative;
-      background:#f9fbff; /* light tint so card pops */
-      background-image: url("{% static 'login-page-lines.png' %}");
-      background-repeat: no-repeat;
-      background-position: right top;
-      background-size: 1500px auto;   /* adjust if needed */
-      padding: 22px 28px;
-      display:flex;
-      align-items:center;     /* vertical center card */
-      justify-content:center; /* horizontal center card */
-      overflow:hidden;
-    }
-
-    /* transparent line decoration (your line.png) */
-    .right::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background-image: url("{% static 'line.png' %}");
-      background-repeat: no-repeat;
-      background-position: right top;
-      background-size: 520px auto;   /* adjust if needed */
-      opacity: .65;                 /* keep it transparent */
-      pointer-events:none;
+      background-color: var(--bg-color);
       z-index:0;
     }
 
-    /* optional extra soft gradients like screenshot */
-    .right::after{
-      content:"";
-      position:absolute;
-      inset:0;
-      background:
-        radial-gradient(circle at 85% 18%, rgba(242,140,40,.10), transparent 40%),
-        radial-gradient(circle at 20% 85%, rgba(13,110,253,.08), transparent 42%);
-
-      pointer-events:none;
-      z-index:0;
-    }
-
-    /* ===== The Card ===== */
-    .auth-card{
+    /* ===== Single layout container (left branding + right card) ===== */
+    .layout{
       position:relative;
       z-index:1;
+      min-height:100vh;
+      display:grid;
+      grid-template-columns: 1.35fr 1fr; /* left bigger, right smaller */
+      align-items:center;
+      gap: clamp(18px, 3vw, 32px);
+      justify-content:space-around;
+      padding: clamp(20px, 2vh, 48px) clamp(18px, 5vw, 70px);
+    }
+
+    /* LEFT branding */
+    .branding{
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:flex-start;
+      gap: 26px;
+      max-width: 720px;
+    }
+
+    .branding h1{
+      margin:0;
+      font-size: clamp(26px, 2.6vw, 36px);
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    .branding p{
+      margin: 10px 0 0;
+      font-size: clamp(15px, 1.4vw, 18px);
+      font-weight: 700;
+      text-align: center;
+      color: var(--primary);
+    }
+
+    .branding-visual{
+      margin-top: 6px;
+      display:flex;
+      align-items:center;
+      justify-content:flex-start;
       width:100%;
-      max-width: 400px;
-      background:#ffffff;
-      border:1px solid #eef2f7;
-      border-radius: 10px;
-      box-shadow: 0 18px 36px rgba(15,23,42,.10);
-      overflow:hidden;
-      padding: 23px 0 5px 0;
     }
 
-    .auth-card-head{
-      padding: 18px 18px 12px;
-      text-align:center;
-      border-bottom:1px solid #f1f5f9;
-    }
-    .brand img{ height:44px; width:auto; display:inline-block; }
-
-    /* optional breadcrumb line like screenshot */
-    .auth-breadcrumb{
-      padding: 10px 18px;
-      font-size: 12px;
-      color:#94a3b8;
-      border-bottom:1px solid #f1f5f9;
-    }
-    .auth-breadcrumb a{
-      color:#f28c28;
-      text-decoration:none;
-      font-weight:700;
-    }
-    .auth-breadcrumb a:hover{ text-decoration:underline; }
-
-    .auth-card-body{
-      padding: 18px;
-      max-height: calc(100vh - 180px); /* scroll inside card for QR/setup */
-      overflow:auto;
-    }
-
-    /* ===== Typography + form look ===== */
-    .panel h1,.panel h2,.panel h3{
-      margin:0 0 10px;
-      line-height:1.15;
-      font-size: 21px;
-    }
-
-    .panel p{ color:#334155;}
-
-    .panel label{
+    .branding-visual img{
+      width: min(520px, 92%);
+      height: auto;
+      filter: drop-shadow(0 20px 40px rgba(0,0,0,0.04));
       display:block;
-      margin:0 0 6px;
-      font-weight:700;
-      font-size:13px;
-      color:#0f172a;
-    }
-    panel label[type="email"]{
-      margin-top: 12px;
+      margin:auto;
     }
 
+    /* RIGHT auth panel */
+    .auth-panel{
+      display:flex;
+      justify-content:flex-end;
+      width:100%;
+    }
 
-    .panel input[type="text"],
-    .panel input[type="password"],
-    .panel input[type="number"],
-    .panel input[type="tel"],
-    .panel input[type="email"],
-    .panel input[type="url"],
-    .panel select,
-    .panel textarea{
-      width:100% !important;
-      box-sizing:border-box;
-      padding:10px 12px;
-      border:1px solid #d8e2ef;
-      border-radius:6px;
-      outline:none;
-      font-size:14px;
+    .auth-card{
+      width:100%;
+      max-width:470px;
       background:#fff;
-      transition: box-shadow .15s ease, border-color .15s ease;
-      margin-bottom: 12px; /* spacing between fields */
+      border:1px solid var(--border-color);
+      border-radius:12px;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.05);
+      display:flex;
+      flex-direction:column;
+
+      /* ✅ important: no forced inner scrolling on normal screens */
+      max-height:none;
+      overflow:visible;
     }
 
-    .panel input:focus,
-    .panel select:focus,
-    .panel textarea:focus{
-      border-color: #777;
+    .auth-card-header{
+      padding: clamp(22px, 3.2vh, 40px) 40px 20px;
+      text-align:center;
+      flex-shrink:0;
+      border-bottom:1px solid rgba(226,232,240,0.35);
     }
 
-    /* Token input (OTP) */
-    .panel input[name*="token"]{
-      font-weight: 800;
-    }
-    .btn-link{
-      font-size: 16px; 
-      font-weight: 700; color:#f28c28;
+    .auth-card-header img{ height:52px; width:auto; }
+
+    .auth-card-scrollable{
+      padding: 22px 40px 40px;
+
+      /* ✅ important: no inner scrollbar unless screen is short */
+      overflow:visible;
+      flex: 1;
     }
 
-    /* Django error lists */
-    .errorlist{
-      list-style:none;
-      padding:0;
-      margin: 8px 0 12px;
-      color:#b91c1c;
-      font-size: 13px;
-      font-weight: 800;
-      border: 1px solid #fca5a5;
-      background: #fef2f2;
-      padding: 8px 12px;
-      border-radius: 6px;
-    }
+    .panel{ padding:0 !important; }
+    form{ margin:0; }
 
-    /* QR images */
-    .panel img{
-      display:block;
-      margin: 14px auto;
-      max-width: 260px;
-      height:auto;
+    /* Breadcrumbs */
+    .breadcrumb{
+      display:flex;
+      align-items:center;
+      gap:6px;
+      margin-bottom:20px;
+      font-size:13px;
+      font-weight:500;
+      color:var(--text-muted);
     }
+    .breadcrumb a{ color:var(--primary); text-decoration:none; }
+    .breadcrumb a:hover{ text-decoration:underline; }
+    .breadcrumb-separator{ color:#cbd5e1; }
 
-    /* buttons */
-    .panel button,
-    .panel input[type="submit"]{
-      padding: 10px 16px;
-      border-radius: 6px;
-      border: 1px solid transparent;
-      cursor: pointer;
-      font-weight: 800;
+    /* keep your button/link classes */
+    .tf-link{
+      font-size:13px;
+      color:var(--text-muted);
+      text-decoration:none;
     }
 
     .tf-btn{
-      height:36px;
-      padding:8px 18px;
-      border-radius:9px;
-      border:1px solid transparent;
-      font-weight:500;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      height:48px;
+      padding:0 24px;
+      font-size:15px;
+      font-weight:700;
+      border-radius:8px;
+      transition:all .2s ease;
       cursor:pointer;
-      margin:0 !important;
-      box-sizing:border-box;
+      width:100%;
+      border:1px solid transparent;
+      font-family:inherit;
+      text-decoration:none;
+      color:inherit;
     }
 
     .tf-btn-primary{
-      background:#ee8e21;   /* your dark blue Next */
+      background-color:var(--primary);
+      padding:20px;
       color:#fff;
-      text-decoration:none;
-      padding: 7px 10px 10px 5px;
     }
+
     .tf-btn-secondary{
-      background:#ee8e21;   /* your dark blue Next */
-      color:#fff;
+      background-color:#f0f0f0;
+      color:var(--text-main);
+      padding:20px;
+      border:1px solid var(--border-color);
+    }
+    .tf-btn-secondary:hover{ background-color:var(--bg-auth); }
+
+    /* Footer */
+    .footer{
+      position:absolute;
+      left: clamp(18px, 5vw, 70px);
+      bottom:18px;
+      z-index:1;
+      font-size:13px;
+      color:var(--text-muted);
+      max-width: calc(100% - (2 * clamp(18px, 5vw, 70px)));
+    }
+    .footer a{
+      color:var(--text-main);
       text-decoration:none;
-      padding: 7px 10px 10px 5px;
+      font-weight:600;
     }
+    .footer a:hover{ text-decoration:underline; }
 
-    /* Forgot password row */
-    .auth-link-row{
-      margin-top: -6px;
-      margin-bottom: 14px;
-      text-align:right; /* screenshot looks left-ish */
-    }
-    .auth-link{
-      font-size: 13px;
-      color: #777;
-      text-decoration: underline;
-    }
-    .auth-link:hover{ filter: brightness(.95); }
-
-    /* ===== Responsive ===== */
-    @media (max-width: 980px){
-      .split{ grid-template-columns: 1fr; }
-      .left{ display:none; }
-      .right{ padding: 16px; }
-      .auth-card{ max-width: 520px; }
-      .right::before{
-        background-position: right -40px top -40px;
-        background-size: 520px auto;
-        opacity:.55;
+    /* ✅ Only when screen height is small (or zoom is high) allow inner scroll */
+    @media (max-height: 760px){
+      .auth-card{
+        max-height: calc(100vh - 40px);
+        overflow: hidden;
       }
+      .auth-card-scrollable{
+        overflow-y: auto;
+      }
+      .auth-card-scrollable::-webkit-scrollbar{ width:4px; }
+      .auth-card-scrollable::-webkit-scrollbar-thumb{ background:#cbd5e1; border-radius:4px; }
+    }
+
+    /* ===== Responsive: stack on tablets/mobiles ===== */
+    @media (max-width: 1024px){
+      .layout{
+        grid-template-columns: 1fr;
+        min-height:auto;
+        padding: 32px 18px 70px;
+        gap: 18px;
+      }
+      .branding{
+        align-items:center;
+        text-align:center;
+        max-width: 900px;
+      }
+      .branding-visual{ justify-content:center; }
+      .auth-panel{ justify-content:center; }
+      .footer{
+        left: 18px;
+        right: 18px;
+        text-align:center;
+        max-width: none;
+      }
+    }
+
+    @media (max-width: 480px){
+      .auth-card-header{ padding: 28px 20px 14px; }
+      .auth-card-scrollable{ padding: 18px 20px 28px; }
     }
   </style>
 
@@ -321,48 +270,43 @@
 
 <body>
   <div class="shell">
-    <div class="split">
 
-      <!-- LEFT -->
-      <section class="left">
-        <header class="left-header">
-          <h1 class="left-title">Real Time Visibility, Security and Control</h1>
-          <p class="left-subtitle">Connecting People, Places, and Things</p>
-        </header>
+    <div class="layout">
 
-        <div class="left-visual">
-          <img src="{% static 'loginblock.png' %}" alt="Illustration">
+      <!-- LEFT: Branding -->
+      <section class="branding">
+        <div>
+          <h1>Real Time Visibility, Security and Control</h1>
+          <p>Connecting People, Places, and Things</p>
         </div>
 
-        <footer class="left-footer">
-          Copyright © 2025-2026 Nexapp Technologies Pvt Ltd. All rights reserved.
-          <a href="/terms">Terms of Service</a> • <a href="/privacy">Privacy Policy</a>
-        </footer>
+        <div class="branding-visual">
+          <img src="{% static 'loginblock.png' %}" alt="SD-WAN Visualization">
+        </div>
       </section>
 
-      <!-- RIGHT -->
-      <section class="right">
+      <!-- RIGHT: Auth Card -->
+      <section class="auth-panel">
         <div class="auth-card">
+          <header class="auth-card-header">
+            <img src="{% static 'Nexapp-Logo.png' %}" alt="Nexapp Logo">
+          </header>
 
-          <!-- card header with logo -->
-          <div class="auth-card-head">
-            <div class="brand">
-              <img src="{% static 'Nexapp-Logo.png' %}" alt="Nexapp">
-            </div>
-          </div>
-
-
-          <!-- body: your actual login / token / setup content -->
-          <div class="auth-card-body">
+          <div class="auth-card-scrollable">
             <div class="panel">
               {% block content %}{% endblock %}
             </div>
           </div>
-
         </div>
       </section>
 
     </div>
+
+    <footer class="footer">
+      Copyright &copy; 2025-2026 Nexapp Technologies Pvt Ltd. All rights reserved.
+      <a href="/terms">Terms of Service</a> &bull; <a href="/privacy">Privacy Policy</a>
+    </footer>
+
   </div>
 </body>
 </html>
