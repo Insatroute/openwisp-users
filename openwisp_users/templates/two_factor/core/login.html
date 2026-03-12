@@ -7,11 +7,14 @@
 {% endblock %}
 
 {% block content %}
-{% comment %} <div class="breadcrumb">
-  <a href="/">{% trans "Home" %}</a>
-  <span class="breadcrumb-separator">›</span>
-  <span>{% trans "Log in" %}</span>
-</div> {% endcomment %}
+{% if request.GET.session_expired %}
+<div style="margin-bottom: 16px;">
+  <div style="padding: 12px 16px; border-radius: 8px; font-size: 14px; font-weight: 500;
+    background: #fff8e1; color: #b8860b; border: 1px solid #ffe082;">
+    {% trans "Your session has expired. Please log in again." %}
+  </div>
+</div>
+{% endif %}
 
 <h1>{% block title %}{% trans "Login" %}{% endblock %}</h1>
 

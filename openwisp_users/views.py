@@ -1,9 +1,14 @@
+import time
+
+from django.http import JsonResponse
+from django.views import View
 from swapper import load_model
 
 from openwisp_utils.admin_theme.views import (
     AutocompleteJsonView as BaseAutocompleteJsonView,
 )
 
+from . import settings as app_settings
 from .widgets import SHARED_SYSTEMWIDE_LABEL
 
 Organization = load_model("nexapp_users", "Organization")
@@ -45,3 +50,35 @@ class AutocompleteJsonView(BaseAutocompleteJsonView):
         if self.object_list.model == Organization:
             return self.request.user.is_superuser
         return super().get_allow_null()
+
+
+class SessionActivityView(View):
+    """
+    Endpoint for the frontend JS to:
+    - GET: check remaining session time
+    - POST: refresh session activity (heartbeat)
+    """
+
+    def get(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return JsonResponse({"authenticated": False, "remaining": 0})
+        last_activity = request.session.get("last_activity")
+        timeout = app_settings.SESSION_INACTIVITY_TIMEOUT
+        if last_activity:
+            elapsed = time.time() - last_activity
+            remaining = max(0, timeout - elapsed)
+        else:
+            remaining = timeout
+        return JsonResponse(
+            {
+                "authenticated": True,
+                "remaining": int(remaining),
+                "timeout": timeout,
+            }
+        )
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return JsonResponse({"authenticated": False}, status=401)
+        request.session["last_activity"] = time.time()
+        return JsonResponse({"authenticated": True, "status": "refreshed"})

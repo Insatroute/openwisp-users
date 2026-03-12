@@ -41,6 +41,10 @@ USER_PASSWORD_EXPIRATION = getattr(
 STAFF_USER_PASSWORD_EXPIRATION = getattr(
     settings, "OPENWISP_USERS_STAFF_USER_PASSWORD_EXPIRATION", 0
 )
+# Session inactivity timeout in seconds (default: 900 = 15 minutes)
+SESSION_INACTIVITY_TIMEOUT = getattr(
+    settings, "OPENWISP_USERS_SESSION_INACTIVITY_TIMEOUT", 900
+)
 # Set the AutocompleteFilter view if it is not defined in the settings
 setattr(
     settings,
